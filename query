@@ -1,0 +1,121 @@
+
+Query to get latest price for item
+
+select * from prices p where date_time = (select max(date_time) from prices p1 where p.i_id=p1.i_id group by i_id);
+
+
+
+
+WITH rooms_agg AS(
+            SELECT rm.*
+        FROM rooms rm WHERE rm.rooms_id NOT IN(select booking.r_id from booking where (booking_status='booked' OR booking_status='occupy' or booking_status='reserve')   and ((checkin_date  BETWEEN $1 and $2) or (checkout_date  BETWEEN $1 and $2) or (checkin_date <= $1 AND checkout_date >= $2) or (checkin_date = $1 AND checkout_date = $2)))
+    or rm.rooms_id IS NULL 
+            group by 1,status,room_num order by room_num ASC),
+            category_agg AS(
+                SELECT ca.*,
+                json_agg(ra.*) as nested_rooms
+                from roomcategory as ca
+                LEFT JOIN rooms_agg as ra on ra.r_cat= ca.cat_id
+                group by 1,price,cat_name),
+                roomtype_agg as ( SELECT rt.*,
+                    json_agg(ca.*) as nested_category
+                    From roomtype as rt
+                    LEFT JOIN category_agg as ca on ca.rid= rt.room_id group by 1) select * from roomtype_agg
+
+
+ WITH 
+    rooms_agg AS(
+        SELECT r.*,json_agg((select x from 
+        (select bk.*
+            From booking bk where bk.checkout_date >$1 and bk.checkout_date <=$2  
+        ) as x
+    )) nested_booking
+        FROM rooms r
+        LEFT JOIN booking b ON b.r_id=r.rooms_id
+        GROUP BY 1
+    ),
+    category_agg AS(
+        SELECT c.*,json_agg(ra.*) nested_rooms 
+        FROM roomcategory c 
+        LEFT JOIN rooms_agg ra ON ra.r_cat=c.cat_id
+        GROUP BY 1
+    ),
+    type_agg AS(
+        SELECT t.*,json_agg(ca.*) nested_category
+        FROM roomtype t
+        LEFT JOIN category_agg ca ON ca.rid=t.room_id
+        GROUP BY 1
+    ) 
+        select * from type_agg;
+
+
+
+ WITH 
+    rooms_agg AS(
+        SELECT r.*,json_agg(b.*) nested_booking
+        FROM rooms r
+        LEFT JOIN booking b ON b.r_id=r.rooms_id
+        GROUP BY 1
+    ),
+    category_agg AS(
+        SELECT c.*,json_agg(ra.*) nested_rooms 
+        FROM roomcategory c 
+        LEFT JOIN rooms_agg ra ON ra.r_cat=c.cat_id
+        GROUP BY 1
+    ),
+    type_agg AS(
+        SELECT t.*,json_agg(ca.*) nested_category
+        FROM roomtype t
+        LEFT JOIN category_agg ca ON ca.rid=t.room_id
+        GROUP BY 1
+    ) 
+        select * from type_agg;
+
+WITH rooms_agg AS(
+        SELECT rm.r_cat,rm.room_num,rm.status,
+        json_agg((select x from (select bk.booking_id,(select customer from(select customer_fname,phone from customer where customer_id=bk.cust_id) as customer),bk.checkin_date,bk.checkout_date,bk.booking_status,bk.checkout_date::date - bk.checkin_date::date+1 as days,bk.no_of_adults,bk.no_of_childrens) as x)) as nested_booking
+        FROM rooms rm
+        LEFT JOIN booking bk on rm.rooms_id = bk.r_id
+        where (checkin_date between $1 and $2
+        or checkout_date between $1 and $2) 
+       and bk.booking_status!='cancel' and booking_status!='vacant'
+        group by 1,status,room_num order by room_num ASC),
+        category_agg AS(
+            SELECT ca.rid,ca.cat_name,ca.price,
+            json_agg(ra.*) as nested_rooms
+            from roomcategory as ca
+            LEFT JOIN rooms_agg as ra on ra.r_cat= ca.cat_id
+            group by 1,price,cat_name),
+            roomtype_agg as ( SELECT rt.room_type,
+                json_agg(ca.*) as nested_category
+                From roomtype as rt
+                LEFT JOIN category_agg as ca on ca.rid= rt.room_id group by 1) select * from roomtype_agg
+
+
+
+    (select x from 
+        (select bk.*
+            From booking bk where bk.checkout_date >$1 and bk.checkout_date <=$2  
+        ) as x
+    )
+
+
+      /*let sql = `WITH rooms_agg AS(
+        SELECT rm.r_cat,rm.room_num,rm.status,
+        json_agg((select x from (select bk.booking_id,(select customer from(select customer_fname,phone from customer where customer_id=bk.cust_id) as customer),bk.checkin_date,bk.checkout_date,bk.booking_status,bk.checkout_date::date - bk.checkin_date::date+1 as days,bk.no_of_adults,bk.no_of_childrens) as x)) as nested_booking
+        FROM rooms rm
+        LEFT JOIN booking bk on rm.rooms_id = bk.r_id
+        where (checkin_date between $1 and $2
+        or checkout_date between $1 and $2)  
+       and (bk.booking_status!='cancel' and bk.booking_status!=vacant)
+        group by 1,status,room_num order by room_num ASC),
+        category_agg AS(
+            SELECT ca.rid,ca.cat_name,ca.price,
+            json_agg(ra.*) as nested_rooms
+            from roomcategory as ca
+            LEFT JOIN rooms_agg as ra on ra.r_cat= ca.cat_id
+            group by 1,price,cat_name),
+            roomtype_agg as ( SELECT rt.room_type,
+                json_agg(ca.*) as nested_category
+                From roomtype as rt
+                LEFT JOIN category_agg as ca on ca.rid= rt.room_id group by 1) select * from roomtype_agg`;*/
