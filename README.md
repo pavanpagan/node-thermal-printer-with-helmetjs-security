@@ -58,6 +58,7 @@ Dependency requires build-essentials
 # $ npm install node-thermal-printer
 
 Features
+
 printer.init({
   type: 'star', 
   interface: '/dev/usb/lp0',
@@ -70,45 +71,9 @@ printer.isPrinterConnected( function(isConnected){ } )
 printer.execute( function(err){ } );
 printer.raw(new Buffer("Hello world"), function(err){ } ); 
 printer.print("Hello World");
-printer.println("Hello World");
-printer.openCashDrawer();
-printer.cut();
 
-printer.beep();
-printer.upsideDown(true);
- 
-printer.bold(true);
-printer.invert(true);
-printer.underline(true);
-printer.underlineThick(true);
-printer.drawLine();
-printer.newLine();
- 
-printer.alignCenter(); 
-printer.alignLeft(); 
-printer.alignRight();
-printer.setTypeFontA();
-printer.setTypeFontB();
- 
-printer.setTextNormal(); 
-printer.setTextDoubleHeight();
-printer.setTextDoubleWidth(); 
-printer.setTextQuadArea();
- 
-printer.leftRight("Left", "Right");
-printer.table(["One", "Two", "Three"]);
-printer.tableCustom([
-  { text:"Left", align:"LEFT", width:0.5 },
-  { text:"Center", align:"CENTER", width:0.25, bold:true },
-  { text:"Right", align:"RIGHT", width:0.25 }
-]);
- 
-printer.code128("Code128");
-printer.printQR("https://github.com/Klemen1337/node-thermal-printer"); 
-printer.printImage('./assets/olaii-logo-black.png', function(done){ }); 
- 
-print.clear();
-print.getText();
-print.getBuffer();
-print.getWidth(); 
+
+
+# For More Deatails https://www.npmjs.com/package/thermal-printer
+
  
