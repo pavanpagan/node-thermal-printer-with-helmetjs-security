@@ -15,30 +15,30 @@ app.use(helmet())
 
 Module	Default?
 
-# contentSecurityPolicy for setting Content Security Policy
+ contentSecurityPolicy for setting Content Security Policy
 
-# dnsPrefetchControl controls browser DNS prefetching
+ dnsPrefetchControl controls browser DNS prefetching
 
-# expectCt for handling Certificate Transparency	
+ expectCt for handling Certificate Transparency	
 
-# featurePolicy to limit your site’s features	
+ featurePolicy to limit your site’s features	
 
-# frameguard to prevent clickjacking	
+ frameguard to prevent clickjacking	
 
-# hidePoweredBy to remove the X-Powered-By header
+ hidePoweredBy to remove the X-Powered-By header
 	
-# hsts for HTTP Strict Transport Security	
+ hsts for HTTP Strict Transport Security	
 
-# ieNoOpen sets X-Download-Options for IE8+	
+ ieNoOpen sets X-Download-Options for IE8+	
 
-# noCache to disable client-side caching	
+ noCache to disable client-side caching	
 
-# noSniff to keep clients from sniffing the MIME type	
+ noSniff to keep clients from sniffing the MIME type	
 
-# permittedCrossDomainPolicies for handling Adobe products’ crossdomain requests	
+ permittedCrossDomainPolicies for handling Adobe products’ crossdomain requests	
 
-# referrerPolicy to hide the Referer header	
-# xssFilter adds some small XSS protections
+ referrerPolicy to hide the Referer header	
+ xssFilter adds some small XSS protections
 
 
 
@@ -59,56 +59,56 @@ Dependency requires build-essentials
 
 Features
 printer.init({
-  type: 'star',                                     // Printer type: 'star' or 'epson'
-  interface: '/dev/usb/lp0',                        // Printer interface
-  characterSet: 'SLOVENIA',                         // Printer character set
-  removeSpecialCharacters: false,                   // Removes special characters - default: false
-  replaceSpecialCharacters: true                    // Replaces special characters listed in config files - default: true
+  type: 'star', 
+  interface: '/dev/usb/lp0',
+  characterSet: 'SLOVENIA',
+  removeSpecialCharacters: false,
+  replaceSpecialCharacters: true
 });
  
-printer.isPrinterConnected( function(isConnected){ } )     // Check if printer is connected, callback passes bool of status
-printer.execute( function(err){ } );                       // Executes all the commands. Optional callback returns null if no error, else error message
-printer.raw(new Buffer("Hello world"), function(err){ } ); // Print instantly. Optional callback returns null if no error, else error message
-printer.print("Hello World");                              // Append text
-printer.println("Hello World");                            // Append text with new line
-printer.openCashDrawer();                                  // Kick the cash drawer
-printer.cut();                                             // Cuts the paper (if printer only supports one mode use this)
-printer.partialCut();                                      // Cuts the paper leaving a small bridge in middle (if printer supports multiple cut modes)
-printer.beep();                                            // Sound internal beeper/buzzer (if available)
-printer.upsideDown(true);                                  // Content is printed upside down (rotated 180 degrees)
+printer.isPrinterConnected( function(isConnected){ } )
+printer.execute( function(err){ } );
+printer.raw(new Buffer("Hello world"), function(err){ } ); 
+printer.print("Hello World");
+printer.println("Hello World");
+printer.openCashDrawer();
+printer.cut();
+
+printer.beep();
+printer.upsideDown(true);
  
-printer.bold(true);                                 // Set text bold
-printer.invert(true);                               // Background/text color inversion
-printer.underline(true);                            // Underline text (1 dot thickness)
-printer.underlineThick(true);                       // Underline text with thick line (2 dot thickness)
-printer.drawLine();                                 // Draws a line
-printer.newLine();                                  // Insers break line
+printer.bold(true);
+printer.invert(true);
+printer.underline(true);
+printer.underlineThick(true);
+printer.drawLine();
+printer.newLine();
  
-printer.alignCenter();                              // Align text to center
-printer.alignLeft();                                // Align text to left
-printer.alignRight();                               // Align text to right
+printer.alignCenter(); 
+printer.alignLeft(); 
+printer.alignRight();
+printer.setTypeFontA();
+printer.setTypeFontB();
  
-printer.setTypeFontA();                             // Set font type to A (default)
-printer.setTypeFontB();                             // Set font type to B
+printer.setTextNormal(); 
+printer.setTextDoubleHeight();
+printer.setTextDoubleWidth(); 
+printer.setTextQuadArea();
  
-printer.setTextNormal();                            // Set text to normal
-printer.setTextDoubleHeight();                      // Set text to double height
-printer.setTextDoubleWidth();                       // Set text to double width
-printer.setTextQuadArea();                          // Set text to quad area
- 
-printer.leftRight("Left", "Right");                 // Prints text left and right
-printer.table(["One", "Two", "Three"]);             // Prints table equaly
-printer.tableCustom([                               // Prints table with custom settings (text, align, width, bold)
+printer.leftRight("Left", "Right");
+printer.table(["One", "Two", "Three"]);
+printer.tableCustom([
   { text:"Left", align:"LEFT", width:0.5 },
   { text:"Center", align:"CENTER", width:0.25, bold:true },
   { text:"Right", align:"RIGHT", width:0.25 }
 ]);
  
-printer.code128("Code128");                         // Print code128 bar code
-printer.printQR("https://github.com/Klemen1337/node-thermal-printer"); // Print QR code
-printer.printImage('./assets/olaii-logo-black.png', function(done){ }); // Print PNG image (uses callback)
+printer.code128("Code128");
+printer.printQR("https://github.com/Klemen1337/node-thermal-printer"); 
+printer.printImage('./assets/olaii-logo-black.png', function(done){ }); 
  
-print.clear();                                      // Clears printText value
-print.getText();                                    // Returns printer buffer string value
-print.getBuffer();                                  // Returns printer buffer
-print.getWidth();                                   // Get number of characters in one line	
+print.clear();
+print.getText();
+print.getBuffer();
+print.getWidth(); 
+ 
